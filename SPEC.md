@@ -44,7 +44,7 @@
 #### Entry (기록)
 | 필드 | 타입 | 설명 |
 |------|------|------|
-| `id` | string | 고유 ID (`e_<timestamp>_<n>_<rand>`) |
+| `id` | string | 고유 ID `e_<선택날짜자정 timestamp>_<n>_<rand>`. timestamp는 현재시각이 아니라 **선택 날짜 자정의 `getTime()`**, `<n>`은 추가 시점의 `entries.length`, `<rand>`는 난수. 같은 날 추가분은 timestamp가 동일하므로 고유성은 `<n>·<rand>`가 보장 |
 | `date` | string | 기록 날짜 `YYYY-MM-DD` (로컬 기준) |
 | `category` | string | Category.id 참조 |
 | `start` | string | 시작 시각 `HH:MM` (24시간제) |
@@ -101,7 +101,7 @@
 
 ### 3.3 하루 합계 / 남은 시간
 - `dayTotal` = 선택 날짜의 모든 Entry.minutes 합.
-- `dayLeft` = `1440 - dayTotal`. 음수면 `"0분"` 표시(과기록 허용하되 남은시간은 0으로).
+- `dayLeft` = `1440 - dayTotal`. **0 이하면** `"0분"` 표시(과기록 허용하되 남은시간은 0으로).
 
 ### 3.4 카테고리별 요약
 - 범위 = `오늘`(선택 날짜) 또는 `이번 주`.
@@ -121,7 +121,7 @@
 ┌──────────────────────────────────────┐
 │  ‹            오늘            ›        │  ← 헤더(sticky). 좌우 화살표로 날짜 이동
 │            6월 14일 (토)              │     가운데 날짜 탭 → 오늘로 이동
-│   기록 시간 1시간 30분 · 남은 22시간 30분 │
+│  기록 시간 1시간 30분 · 남은 시간 22시간 30분 │
 ├──────────────────────────────────────┤
 │  ┌────────────────────────────────┐  │
 │  │        +  기록 추가             │  │  ← 항상 보이는 인라인 추가 버튼(본문 최상단)
@@ -253,6 +253,7 @@ CSS 변수(라이트/다크 자동 전환, `prefers-color-scheme`):
 | `--danger` 위험 | `#ef4444` | (동일) |
 | `--radius` | `14px` | |
 
+- viewport: `width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no` → **핀치 줌 비활성**(모바일 앱처럼 고정 배율). 입력 폰트 16px과 함께 iOS의 입력 시 자동 확대를 방지.
 - 폰트: 시스템 폰트 스택(`-apple-system, "Apple SD Gothic Neo", ...`), 본문 16px.
 - iOS 안전영역: `env(safe-area-inset-top/bottom)`로 헤더 상단/하단 여백 보정.
 - 시트는 하단에서 슬라이드 업 애니메이션(0.25s).
@@ -321,3 +322,4 @@ CSS 변수(라이트/다크 자동 전환, `prefers-color-scheme`):
 ## 11. 버전 기록
 - **v1 (초기)**: 카테고리 + 시작/종료 기록, 일/주 요약, 카테고리 관리, JSON 백업, PWA.
 - **v1.1**: 항상 보이는 인라인 추가 버튼 추가, 서비스워커 네트워크 우선으로 변경.
+- **v1.1.1(문서)**: SPEC를 코드와 대조해 Entry id 설명·헤더 문구·dayLeft 조건 정정, 핀치 줌 비활성(viewport) 명시.
