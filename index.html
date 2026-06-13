@@ -104,6 +104,15 @@
   .bartrack { height: 9px; background: var(--line); border-radius: 6px; overflow: hidden; }
   .barfill { height: 100%; border-radius: 6px; transition: width .3s ease; }
 
+  /* inline add button (always visible, in document flow) */
+  .add-inline {
+    width: 100%; padding: 15px; border: none; border-radius: var(--radius);
+    background: var(--accent); color: #fff; font-size: 17px; font-weight: 700;
+    cursor: pointer; margin-top: 4px;
+    box-shadow: 0 4px 14px rgba(79,70,229,0.30);
+  }
+  .add-inline:active { transform: scale(0.99); }
+
   /* floating add button */
   .fab {
     position: fixed; right: 20px; bottom: calc(20px + var(--safe-bottom)); z-index: 20;
@@ -181,6 +190,8 @@
 </header>
 
 <main>
+  <button class="add-inline" id="addBtnInline">+ 기록 추가</button>
+
   <div class="section-title">오늘의 기록</div>
   <div id="entryList"></div>
 
@@ -598,6 +609,7 @@
   });
 
   el("addBtn").addEventListener("click", function () { openEntry(null); });
+  el("addBtnInline").addEventListener("click", function () { openEntry(null); });
   el("saveEntry").addEventListener("click", saveEntry);
   el("cancelEntry").addEventListener("click", closeEntry);
   el("deleteEntry").addEventListener("click", deleteEntry);

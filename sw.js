@@ -1,5 +1,5 @@
-// 간단한 오프라인 캐시 서비스워커
-var CACHE = "tlb-v1";
+// 간단한 오프라인 캐시 서비스워커 (네트워크 우선 + 캐시 폴백)
+var CACHE = "tlb-v2";
 var ASSETS = [
   "./",
   "./index.html",
@@ -31,16 +31,19 @@ self.addEventListener("activate", function (e) {
   );
 });
 
+// 네트워크 우선: 온라인이면 항상 최신을 받고, 받은 응답을 캐시에 갱신.
+// 네트워크 실패(오프라인) 시에만 캐시로 폴백.
 self.addEventListener("fetch", function (e) {
   if (e.request.method !== "GET") return;
   e.respondWith(
-    caches.match(e.request).then(function (cached) {
-      if (cached) return cached;
-      return fetch(e.request).then(function (res) {
-        var copy = res.clone();
-        caches.open(CACHE).then(function (c) { c.put(e.request, copy).catch(function () {}); });
-        return res;
-      }).catch(function () { return cached; });
+    fetch(e.request).then(function (res) {
+      var copy = res.clone();
+      caches.open(CACHE).then(function (c) { c.put(e.request, copy).catch(function () {}); });
+      return res;
+    }).catch(function () {
+      return caches.match(e.request).then(function (cached) {
+        return cached || caches.match("./index.html");
+      });
     })
   );
 });
